@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Human Linux — uninstall
+# ReadyLinux — uninstall
 # Removes files and rules the install script created.
 # Does not remove packages. Does not undo dock, scale, pins, or browser defaults.
 if [[ ! -t 1 ]]; then
-  zenity --question --width=420 --title="Human Linux uninstall" \
+  zenity --question --width=420 --title="ReadyLinux uninstall" \
     --text="This removes the links, bookmarks, watcher, Find my file, Brax.me, the lid rule, the IPv4 preference, and the file associations for deb, rpm, AppImage, ISO, video, and scripts.\n\nPackages stay installed. A terminal will open for your password. Continue?" \
     || exit 0
   term="$(command -v gnome-terminal || command -v x-terminal-emulator || true)"

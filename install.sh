@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Human Linux — install
+# ReadyLinux — install
 #
 # Supported:
 #   Ubuntu GNOME, Zorin, Linux Mint Cinnamon / MATE / Xfce,
@@ -48,7 +48,7 @@ if [ -z "${BASH_VERSION:-}" ]; then
 fi
 # Double-click in Files does nothing useful. Use install.desktop, or run in a terminal.
 if [[ ! -t 1 ]]; then
-  zenity --question --width=420 --title="Human Linux" \
+  zenity --question --width=420 --title="ReadyLinux" \
     --text="This installs KeePassXC, KolourPaint, Chrome, VLC, Thunderbird, GDebi, Disks, and Flatpak.\n\nIt also sets folders, the dock, the lid rule, and Find my file.\n\nA terminal will open so you can enter your password. Continue?" \
     || exit 0
   term="$(command -v gnome-terminal || command -v x-terminal-emulator || true)"
@@ -339,7 +339,7 @@ EOF
 chmod +x "$HOME/.local/bin/human-linux-usb-watch"
 cat > "$HOME/.config/systemd/user/human-linux-usb-watch.service" <<EOF
 [Unit]
-Description=Refresh Human Linux Media links
+Description=Refresh ReadyLinux Media links
 After=graphical-session.target
 [Service]
 ExecStart=$HOME/.local/bin/human-linux-usb-watch
@@ -393,7 +393,7 @@ Terminal=false
 Type=Application
 Icon=system-search
 Categories=Utility;
-X-Human-Linux=true
+X-ReadyLinux=true
 EOF
 
 # ---------------------------------------------------------------------------
@@ -472,7 +472,7 @@ Terminal=false
 Type=Application
 Categories=Network;
 StartupNotify=true
-X-Human-Linux=true
+X-ReadyLinux=true
 EOF
 fi
 
@@ -577,7 +577,7 @@ Icon=application-x-executable
 Terminal=false
 Type=Application
 Categories=Utility;
-X-Human-Linux=true
+X-ReadyLinux=true
 DESK
 ( cd /tmp && rm -rf squashfs-root
   "$dest" --appimage-extract >/dev/null 2>&1 || true
@@ -605,7 +605,7 @@ Terminal=false
 Type=Application
 MimeType=application/vnd.appimage;application/x-iso9660-appimage;application/x-executable;
 NoDisplay=true
-X-Human-Linux=true
+X-ReadyLinux=true
 EOF
 mkdir -p "$HOME/.local/share/mime/packages"
 cat > "$HOME/.local/share/mime/packages/appimage.xml" <<'EOF'
@@ -663,7 +663,7 @@ Terminal=false
 Type=Application
 MimeType=application/x-cd-image;application/x-iso9660-image;application/vnd.efi.iso;application/x-raw-disk-image;
 NoDisplay=true
-X-Human-Linux=true
+X-ReadyLinux=true
 EOF
   for mime in application/x-cd-image application/x-iso9660-image application/vnd.efi.iso application/x-raw-disk-image; do
     xdg-mime default open-iso.desktop "$mime" || true
@@ -1362,7 +1362,7 @@ Terminal=false
 Type=Application
 MimeType=text/x-shellscript;application/x-shellscript;
 NoDisplay=true
-X-Human-Linux=true
+X-ReadyLinux=true
 EOF
 xdg-mime default sh-launcher.desktop text/x-shellscript || true
 xdg-mime default sh-launcher.desktop application/x-shellscript || true
@@ -1383,7 +1383,7 @@ if [[ -f "$0" ]]; then
   fi
   cat > "$HOME/.local/share/applications/human-linux-install.desktop" <<EOF
 [Desktop Entry]
-Name=Human Linux install
+Name=ReadyLinux install
 Comment=Preview, confirm, then run the install
 Exec=$kit/install.sh
 Terminal=false
@@ -1393,7 +1393,7 @@ Categories=Utility;
 EOF
   cat > "$HOME/.local/share/applications/human-linux-uninstall.desktop" <<EOF
 [Desktop Entry]
-Name=Human Linux uninstall
+Name=ReadyLinux uninstall
 Comment=Preview, confirm, then remove kit files
 Exec=$kit/uninstall.sh
 Terminal=false
@@ -1409,7 +1409,7 @@ fi
 
 log "Done."
 echo "Plug a USB stick in. It should appear under ~/Media/Disks after Ubuntu mounts it."
-echo "Show Apps: Human Linux install, and Human Linux uninstall."
+echo "Show Apps: ReadyLinux install, and ReadyLinux uninstall."
 echo "Log out and back in if Show Apps or the dock did not update."
 echo "On Zorin, dock icons can show but not click until that logout."
 echo "Lid-on-AC applies fully after the next reboot. logind was not restarted."
