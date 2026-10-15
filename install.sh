@@ -6,7 +6,7 @@
 #   Pop!_OS COSMIC, Fedora Workstation.
 #
 # Run:
-#   wget -qO- https://raw.githubusercontent.com/robbraxman/fixing-linux/main/install.sh | bash
+#   wget -qO- https://raw.githubusercontent.com/robbraxman/readylinux/main/install.sh | bash
 #
 # What is the same on every distro:
 #   Packages: Brave, Chrome, Firefox, Thunderbird, KeePassXC, KolourPaint, VLC.
