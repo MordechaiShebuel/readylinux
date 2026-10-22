@@ -41,7 +41,36 @@
 #            There is no dock until Dash to Dock is enabled.
 #   GNOME: dock clicks can freeze until a logout after pins are written.
 #   Colors are not forced on any terminal. The user keeps their palette.
-#
+
+# Root check should happen first thing
+if [[ "$(id -u)" -eq 0 ]]; then
+  warn "Run as your user, not root. The script will ask for sudo."
+  exit 1
+fi
+
+# ANSI style codes
+RED="\e[38;5;1m" # red
+GRN="\e[38;5;2m" # green
+YLW="\e[38;5;3m" # yellow
+MGT="\e[38;5;5m" # magenta
+GRY="\e[38;5;8m" # gray
+BLD="\e[1m"      # bold
+ITL="\e[3m"      # italic
+RS="\e[0m"       # style reset
+B_RED="$BLD$RED"
+B_GRN="$BLD$GRN"
+B_YLW="$BLD$YLW"
+B_MGT="$BLD$MGT"
+I_YLW="$ITL$YLW"
+B_GRY="$BLD$GRY"
+I_GRY="$ITL$GRY"
+BI_GRN="$ITL$B_GRN"
+BI_YLW="$ITL$B_YLW"
+BI_GRY="$ITL$B_GRY"
+BI="$ITL$BLD"
+BI_MGT="$ITL$B_MGT"
+####
+
 # Mint's file manager may run this with sh. That fails on lines 9, 17, and 23.
 if [ -z "${BASH_VERSION:-}" ]; then
   exec bash "$0" "$@"
@@ -66,11 +95,6 @@ log()  { printf '\n==> %s\n' "$*"; }
 warn() { printf '!!  %s\n' "$*" >&2; }
 need_cmd() { command -v "$1" >/dev/null 2>&1; }
 
-if [[ "$(id -u)" -eq 0 ]]; then
-  warn "Run as your user, not root. The script will ask for sudo."
-  exit 1
-fi
-
 desktop_session() {
   printf '%s\n' "${XDG_CURRENT_DESKTOP:-${DESKTOP_SESSION:-unknown}}"
 }
@@ -91,11 +115,11 @@ case "${ID:-}" in
       keepassxc kolourpaint thunderbird firefox vlc gnome-text-editor gnome-disk-utility \
       gnome-shell-extension-dash-to-dock
     if ! rpm -q google-chrome-stable >/dev/null 2>&1; then
-      log "Adding Google Chrome"
+      log "Adding ${GRN}Google Chrome${RS}"
       sudo dnf install -y https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
     fi
     if ! rpm -q brave-browser >/dev/null 2>&1; then
-      log "Adding Brave"
+      log "Adding ${GRN}Brave${RS}"
       sudo dnf install -y dnf-plugins-core
       if dnf config-manager --help 2>&1 | grep -q addrepo; then
         sudo dnf config-manager addrepo --from-repofile=https://brave-browser-rpm-release.s3.brave.com/brave-browser.repo
@@ -118,7 +142,7 @@ case "${ID:-}" in
       sudo DEBIAN_FRONTEND=noninteractive apt-get install -y xed || true
     fi
     if ! dpkg -s google-chrome-stable >/dev/null 2>&1; then
-      log "Adding Google Chrome"
+      log "Adding ${GRN}Google Chrome${RS}"
       sudo mkdir -p /usr/share/keyrings /tmp
       curl -fsSL -o /tmp/google-chrome.pub https://dl.google.com/linux/linux_signing_key.pub
       sudo rm -f /usr/share/keyrings/google-chrome.gpg
@@ -129,7 +153,7 @@ case "${ID:-}" in
       sudo DEBIAN_FRONTEND=noninteractive apt-get install -y google-chrome-stable
     fi
     if ! dpkg -s brave-browser >/dev/null 2>&1; then
-      log "Adding Brave"
+      log "Adding ${GRN}Brave${RS}"
       sudo mkdir -p /usr/share/keyrings
       curl -fsSL -o /tmp/brave-browser-archive-keyring.gpg \
         https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
@@ -158,7 +182,7 @@ if [[ -f "$snap_tb/profiles.ini" ]]; then
     fi
   fi
   if [[ "$blank" == "1" ]]; then
-    log "Copying Snap Thunderbird profile into the blank apt profile"
+    log "Copying Snap ${GRN}Thunderbird{$RS} profile into the blank apt profile"
     mkdir -p "$HOME/.thunderbird"
     cp -a "$snap_tb"/. "$HOME/.thunderbird"/
   fi
@@ -352,7 +376,7 @@ systemctl --user disable --now usb-watch.service 2>/dev/null || true
 rm -f "$HOME/.config/systemd/user/usb-watch.service" "$HOME/.local/bin/usb-watch"
 systemctl --user daemon-reload || true
 systemctl --user enable human-linux-usb-watch.service || true
-systemctl --user restart human-linux-usb-watch.service || warn "Disk watcher not started. Log in on the desktop and rerun."
+systemctl --user restart human-linux-usb-watch.service || warn "${BI_YLW}Disk watcher not started. Log in on the desktop and rerun.${RS}"
 
 # ---------------------------------------------------------------------------
 # Find my file
@@ -461,7 +485,7 @@ log "Brax.me launcher"
 browser="$(command -v brave-browser || command -v google-chrome-stable || command -v google-chrome || true)"
 if [[ -n "$browser" ]]; then
   mkdir -p "$HOME/.local/share/icons"
-  curl -fsSL -o "$HOME/.local/share/icons/brax-me.png" "$BRAX_ICON_URL" || warn "Brax icon download failed"
+  curl -fsSL -o "$HOME/.local/share/icons/brax-me.png" "$BRAX_ICON_URL" || warn "${BI_YLW}Brax icon download failed${RS}"
   cat > "$HOME/.local/share/applications/brax-me.desktop" <<EOF
 [Desktop Entry]
 Name=Brax.me
@@ -508,7 +532,7 @@ if id="$(first_existing_desktop brave-browser.desktop com.brave.Browser.desktop)
   xdg-mime default "$id" x-scheme-handler/https || true
   xdg-mime default "$id" text/html || true
 else
-  warn "Brave not installed; default browser unchanged"
+  warn "${BI_YLW}Brave not installed; default browser unchanged${RS}"
 fi
 if id="$(first_existing_desktop thunderbird.desktop org.mozilla.Thunderbird.desktop)"; then
   xdg-mime default "$id" x-scheme-handler/mailto || true
@@ -1280,7 +1304,7 @@ if [[ -n "$WALLPAPER_URL" ]]; then
         gsettings set org.mate.background picture-filename "$wall" || true
         gsettings set org.mate.background picture-options 'zoom' || true
       else
-        warn "Wallpaper download failed"
+        warn "${BI_YLW}Wallpaper download failed${RS}"
       fi
     else
       log "Wallpaper already chosen. Skipped."
@@ -1295,7 +1319,7 @@ if [[ -n "$WALLPAPER_URL" ]]; then
       gsettings set org.gnome.desktop.background picture-uri-dark "file://$wall" || true
       gsettings set org.gnome.desktop.background picture-options 'zoom' || true
     else
-      warn "Wallpaper download failed"
+      warn "${BI_YLW}Wallpaper download failed${RS}"
     fi
   fi
 else
@@ -1407,7 +1431,7 @@ EOF
   gio set "$HOME/.local/share/applications/human-linux-uninstall.desktop" metadata::trusted true 2>/dev/null || true
 fi
 
-log "Done."
+log "${BI_GRN}Done.${RS}"
 echo "Plug a USB stick in. It should appear under ~/Media/Disks after Ubuntu mounts it."
 echo "Show Apps: ReadyLinux install, and ReadyLinux uninstall."
 echo "Log out and back in if Show Apps or the dock did not update."
